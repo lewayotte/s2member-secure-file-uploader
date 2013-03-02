@@ -58,7 +58,7 @@ function s2sfu_media_button( $editor_id = 'content' ) {
  */
 function s2sfu_media_upload_handler() {
 	
-	add_filter( 'media_upload_tabs', '__return_false' );
+	add_filter( 'media_upload_tabs', 's2sfu_media_upload_tabs' );
 	add_filter( 'upload_dir', 's2sfu_upload_dir' );
 	
 	$errors = array();
@@ -87,40 +87,18 @@ function s2sfu_media_upload_handler() {
 		
 	}
 
-	return wp_iframe( 'media_upload_type_s2sfu', 's2sfu', $errors, $id );
+	return wp_iframe( 'media_upload_type_form', 's2sfu', $errors, $id );
 	
 }
-/**
- * Modified From media_upload_type_form in WordPress 3.2.1 Core
- * {@internal Missing Short Description}}
- *
- * @since 2.5.0
- *
- * @param unknown_type $type
- * @param unknown_type $errors
- * @param unknown_type $id
- */
-function media_upload_type_s2sfu( $type = 'file', $errors = null, $id = null ) {
-	
-	media_upload_header();
 
-	$post_id = isset( $_REQUEST['post_id'] )? intval( $_REQUEST['post_id'] ) : 0;
-
-	$form_action_url = admin_url("media-upload.php?type=$type&tab=type&post_id=$post_id");
-	$form_action_url = apply_filters('media_upload_form_url', $form_action_url, $type);
-	?>
+function s2sfu_media_upload_tabs() {
 	
-	<form enctype="multipart/form-data" method="post" action="<?php echo esc_attr($form_action_url); ?>" class="media-upload-form type-form validate" id="<?php echo $type; ?>-form">
-	<?php submit_button( '', 'hidden', 'save', false ); ?>
-	<input type="hidden" name="post_id" id="post_id" value="<?php echo (int) $post_id; ?>" />
-	<?php wp_nonce_field('media-form'); ?>
+	$tabs = array(
+		'type' => __('From Computer'), // handler action suffix => tab text
+		's2sfu_library' => __('s2member Secure File Library')
+	);
 	
-	<h3 class="media-title"><?php _e('Add media files from your computer'); ?></h3>
-	
-	<?php s2sfu_media_upload_form( $errors ); ?>
-	
-	</form>
-	<?php
+	return $tabs;
 }
 
 /**
